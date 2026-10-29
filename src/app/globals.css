@@ -1,0 +1,48 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #000000;
+  --muted: #f0f0f0;
+  --muted-foreground: #00000099;
+  --accent-discount: #ff3333;
+  --accent-star: #ffc633;
+  --radius-card: 20px;
+  --radius-pill: 62px;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-discount: var(--accent-discount);
+  --color-star: var(--accent-star);
+  --font-sans: var(--font-satoshi);
+  --font-display: var(--font-integral);
+  --radius-card: var(--radius-card);
+  --radius-pill: var(--radius-pill);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-satoshi), system-ui, sans-serif;
+}
+
+.font-integral {
+  font-family: var(--font-integral), Impact, Haettenschweiler, sans-serif;
+  letter-spacing: 0.02em;
+}
+
+/* Satoshi-like fallbacks when local font unavailable */
+@font-face {
+  font-family: "Satoshi";
+  src: local("Satoshi"), local("Segoe UI"), local("Helvetica Neue");
+  font-display: swap;
+}
