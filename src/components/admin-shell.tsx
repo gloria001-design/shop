@@ -8,6 +8,7 @@ import {
   Package,
   ShoppingBag,
   Store,
+  UserCheck,
   Users,
 } from "lucide-react";
 import { AuthLoading, useRequireAuth } from "@/src/components/require-auth";
@@ -18,6 +19,7 @@ const nav = [
   { href: "/admin/products", label: "Products", icon: Package },
   { href: "/admin/orders", label: "Orders", icon: ShoppingBag },
   { href: "/admin/customers", label: "Customers", icon: Users },
+  { href: "/admin/vendors", label: "Vendors", icon: UserCheck },
 ];
 
 export function AdminShell({ children }: { children: React.ReactNode }) {

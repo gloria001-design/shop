@@ -17,6 +17,9 @@ export type Product = {
   description: string;
   isNew?: boolean;
   isTopSelling?: boolean;
+  /** Owner of the listing. Missing = store-owned (SHOP.CO / admin). */
+  vendorId?: string;
+  vendorName?: string;
 };
 
 export type CartItem = Product & {
@@ -63,5 +66,7 @@ export type Order = {
   address: OrderAddress;
   payment: "cod" | "card";
   status: OrderStatus;
+  /** Per-vendor fulfilment status, keyed by vendorId. */
+  fulfillment?: Record<string, OrderStatus>;
   createdAt: string;
 };

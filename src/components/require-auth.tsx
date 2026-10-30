@@ -16,7 +16,13 @@ export function useRequireAuth(role?: UserRole) {
       return;
     }
     if (role && user.role !== role) {
-      router.replace(user.role === "admin" ? "/admin" : "/account");
+      router.replace(
+        user.role === "admin"
+          ? "/admin"
+          : user.role === "vendor"
+            ? "/vendor"
+            : "/account",
+      );
     }
   }, [hydrated, user, role, pathname, router]);
 

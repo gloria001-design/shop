@@ -77,3 +77,70 @@ export function AuthButton({
     </button>
   );
 }
+
+export function AuthSelect({
+  id,
+  label,
+  value,
+  onChange,
+  options,
+}: {
+  id: string;
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  options: { value: string; label: string }[];
+}) {
+  return (
+    <label className="block">
+      <span className="mb-2 block text-sm font-medium">{label}</span>
+      <select
+        id={id}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="h-12 w-full rounded-full bg-muted px-5 text-sm outline-none ring-black/20 focus:ring-2"
+      >
+        {options.map((o) => (
+          <option key={o.value} value={o.value}>
+            {o.label}
+          </option>
+        ))}
+      </select>
+    </label>
+  );
+}
+
+export function AuthFile({
+  id,
+  label,
+  fileName,
+  onChange,
+  accept = "image/*,.pdf",
+}: {
+  id: string;
+  label: string;
+  fileName: string;
+  onChange: (fileName: string) => void;
+  accept?: string;
+}) {
+  return (
+    <label className="block">
+      <span className="mb-2 block text-sm font-medium">{label}</span>
+      <span className="flex h-12 w-full cursor-pointer items-center justify-between rounded-full bg-muted px-5 text-sm">
+        <span className={fileName ? "truncate" : "text-black/40"}>
+          {fileName || "Choose a file"}
+        </span>
+        <span className="ml-3 shrink-0 font-medium underline underline-offset-2">
+          Browse
+        </span>
+      </span>
+      <input
+        id={id}
+        type="file"
+        accept={accept}
+        className="sr-only"
+        onChange={(e) => onChange(e.target.files?.[0]?.name ?? "")}
+      />
+    </label>
+  );
+}

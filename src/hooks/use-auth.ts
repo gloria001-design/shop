@@ -3,13 +3,14 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-export type UserRole = "user" | "admin";
+export type UserRole = "user" | "vendor" | "admin";
 
 export type AuthUser = {
   id: string;
   name: string;
   email: string;
   role: UserRole;
+  storeName?: string;
 };
 
 type StoredUser = AuthUser & { password: string };
@@ -31,12 +32,24 @@ function withRole(user: Partial<StoredUser> & Pick<StoredUser, "id" | "name" | "
     name: user.name,
     email: user.email,
     password: user.password ?? "",
-    role: user.role === "admin" || user.email === ADMIN_EMAIL ? "admin" : "user",
+    role:
+      user.role === "admin" || user.email === ADMIN_EMAIL
+        ? "admin"
+        : user.role === "vendor"
+          ? "vendor"
+          : "user",
+    storeName: user.storeName,
   };
 }
 
 function publicUser(user: StoredUser): AuthUser {
-  return { id: user.id, name: user.name, email: user.email, role: user.role };
+  return {
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    role: user.role,
+    storeName: user.storeName,
+  };
 }
 
 function ensureAdmin(users: StoredUser[]) {
@@ -58,6 +71,8 @@ type AuthState = {
     name: string;
     email: string;
     password: string;
+    role?: "user" | "vendor";
+    storeName?: string;
   }) => { ok: true } | { ok: false; error: string };
   login: (input: {
     email: string;
@@ -73,13 +88,16 @@ export const useAuth = create<AuthState>()(
       users: [seedAdmin],
       hydrated: false,
       setHydrated: (v) => set({ hydrated: v }),
-      signup: ({ name, email, password }) => {
+      signup: ({ name, email, password, role = "user", storeName }) => {
         const normalized = email.trim().toLowerCase();
         if (!name.trim() || !normalized || password.length < 6) {
           return {
             ok: false,
             error: "Please fill all fields. Password must be at least 6 characters.",
           };
+        }
+        if (role === "vendor" && !storeName?.trim()) {
+          return { ok: false, error: "Please enter your store name." };
         }
         if (normalized === ADMIN_EMAIL) {
           return { ok: false, error: "This email is reserved. Please use another." };
@@ -92,7 +110,8 @@ export const useAuth = create<AuthState>()(
           name: name.trim(),
           email: normalized,
           password,
-          role: "user",
+          role: role === "vendor" ? "vendor" : "user",
+          storeName: role === "vendor" ? (storeName ?? "").trim() : undefined,
         };
         set((state) => ({
           users: [...state.users, account],

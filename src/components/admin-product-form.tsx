@@ -13,9 +13,19 @@ const sizeOptions = ["Small", "Medium", "Large", "X-Large"];
 const inputClass =
   "h-12 w-full rounded-full bg-muted px-5 text-sm outline-none ring-black/20 placeholder:text-black/40 focus:ring-2";
 
-type Props = { product?: Product };
+type Props = {
+  product?: Product;
+  /** Where to go after save / cancel. */
+  basePath?: string;
+  /** When set, new products are owned by this vendor. */
+  vendor?: { id: string; name: string };
+};
 
-export function AdminProductForm({ product }: Props) {
+export function AdminProductForm({
+  product,
+  basePath = "/admin/products",
+  vendor,
+}: Props) {
   const router = useRouter();
   const { items, upsert } = useCatalog();
 
@@ -93,10 +103,12 @@ export function AdminProductForm({ product }: Props) {
       description: description.trim() || "New SHOP.CO piece.",
       isNew,
       isTopSelling,
+      vendorId: product?.vendorId ?? vendor?.id,
+      vendorName: product?.vendorName ?? vendor?.name,
     };
 
     upsert(next);
-    router.push("/admin/products");
+    router.push(basePath);
   }
 
   return (
@@ -266,7 +278,7 @@ export function AdminProductForm({ product }: Props) {
 
           <button
             type="button"
-            onClick={() => router.push("/admin/products")}
+            onClick={() => router.push(basePath)}
             className="inline-flex h-12 items-center rounded-full border border-black/10 px-6 text-sm font-medium"
           >
             Cancel

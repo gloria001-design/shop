@@ -44,6 +44,14 @@ export default function AccountPage() {
             >
               Continue shopping
             </Link>
+            {user.role === "vendor" && (
+              <Link
+                href="/vendor"
+                className="inline-flex h-12 items-center justify-center rounded-full border border-black/10 px-6 text-sm font-medium"
+              >
+                Open vendor dashboard
+              </Link>
+            )}
             {user.role === "admin" && (
               <Link
                 href="/admin"

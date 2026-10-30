@@ -19,7 +19,9 @@ function LoginForm() {
 
   useEffect(() => {
     if (!hydrated || !user) return;
-    router.replace(user.role === "admin" && next === "/" ? "/admin" : next);
+    const home =
+      user.role === "admin" ? "/admin" : user.role === "vendor" ? "/vendor" : "/";
+    router.replace(next === "/" ? home : next);
   }, [hydrated, user, next, router]);
 
   function onSubmit(e: FormEvent) {
@@ -71,6 +73,15 @@ function LoginForm() {
           className="font-medium text-black underline underline-offset-2"
         >
           Sign Up
+        </Link>
+      </p>
+      <p className="mt-3 text-center text-sm text-black/60">
+        Want to sell?{" "}
+        <Link
+          href="/signup?role=vendor"
+          className="font-medium text-black underline underline-offset-2"
+        >
+          Become a vendor
         </Link>
       </p>
       <p className="mt-4 text-center text-xs text-black/40">

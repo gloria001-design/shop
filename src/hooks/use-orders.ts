@@ -23,6 +23,7 @@ type OrdersState = {
   setHydrated: (v: boolean) => void;
   place: (input: PlaceOrderInput) => Order;
   setStatus: (id: string, status: OrderStatus) => void;
+  setFulfillment: (id: string, vendorId: string, status: OrderStatus) => void;
   forUser: (userId: string) => Order[];
 };
 
@@ -45,6 +46,25 @@ export const useOrders = create<OrdersState>()(
       setStatus: (id, status) =>
         set((state) => ({
           orders: state.orders.map((o) => (o.id === id ? { ...o, status } : o)),
+        })),
+      setFulfillment: (id, vendorId, status) =>
+        set((state) => ({
+          orders: state.orders.map((o) => {
+            if (o.id !== id) return o;
+            const fulfillment = { ...o.fulfillment, [vendorId]: status };
+            const vendorIds = [
+              ...new Set(o.items.map((i) => i.vendorId).filter(Boolean)),
+            ] as string[];
+            const states = vendorIds.map((v) => fulfillment[v] ?? "pending");
+            const allVendorOwned = o.items.every((i) => i.vendorId);
+            let overall = o.status;
+            if (allVendorOwned && states.every((s) => s === states[0])) {
+              overall = states[0];
+            } else if (overall === "pending") {
+              overall = "processing";
+            }
+            return { ...o, fulfillment, status: overall };
+          }),
         })),
       forUser: (userId) => get().orders.filter((o) => o.userId === userId),
     }),

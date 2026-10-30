@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
-import { ChevronDown, LayoutDashboard, Menu, Search, ShoppingCart, User, X } from "lucide-react";
+import { ChevronDown, LayoutDashboard, Menu, Search, ShoppingCart, Store, User, X } from "lucide-react";
 import { useCart } from "@/src/hooks/use-cart";
 import { useAuth } from "@/src/hooks/use-auth";
 
@@ -95,6 +95,11 @@ export function SiteHeader() {
               <LayoutDashboard className="size-5 sm:size-6" />
             </Link>
           )}
+          {user?.role === "vendor" && (
+            <Link href="/vendor" aria-label="Vendor dashboard">
+              <Store className="size-5 sm:size-6" />
+            </Link>
+          )}
           <Link href={user ? "/account" : "/login"} aria-label="Account">
             <User className="size-5 sm:size-6" />
           </Link>
@@ -143,10 +148,23 @@ export function SiteHeader() {
                 Admin
               </Link>
             )}
-            {!user && (
-              <Link href="/signup" onClick={() => setMobileOpen(false)}>
-                Sign Up
+            {user?.role === "vendor" && (
+              <Link href="/vendor" onClick={() => setMobileOpen(false)}>
+                Vendor Dashboard
               </Link>
+            )}
+            {!user && (
+              <>
+                <Link href="/signup" onClick={() => setMobileOpen(false)}>
+                  Sign Up
+                </Link>
+                <Link
+                  href="/signup?role=vendor"
+                  onClick={() => setMobileOpen(false)}
+                >
+                  Sell on SHOP.CO
+                </Link>
+              </>
             )}
           </nav>
         </div>

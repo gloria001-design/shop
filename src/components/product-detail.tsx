@@ -55,6 +55,13 @@ export function ProductDetail({ id }: { id: string }) {
         <span className="text-black">{product.type}</span>
       </nav>
 
+      <p className="mb-4 text-sm text-black/60">
+        Sold by{" "}
+        <span className="font-medium text-black">
+          {product.vendorName ?? "SHOP.CO"}
+        </span>
+      </p>
+
       <ProductPurchase product={product} />
       <ProductTabs product={product} />
 

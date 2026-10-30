@@ -18,7 +18,7 @@ export default function AdminDashboardPage() {
   const stats = [
     { label: "Products", value: products.length, href: "/admin/products", icon: Package },
     { label: "Orders", value: orders.length, href: "/admin/orders", icon: ShoppingBag },
-    { label: "Customers", value: users.filter((u) => u.role !== "admin").length, href: "/admin/customers", icon: Users },
+    { label: "Customers", value: users.filter((u) => u.role === "user").length, href: "/admin/customers", icon: Users },
   ];
 
   return (
