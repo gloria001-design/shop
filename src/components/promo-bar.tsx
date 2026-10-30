@@ -3,10 +3,12 @@
 import { useState } from "react";
 import { X } from "lucide-react";
 import Link from "next/link";
+import { useAuth } from "@/src/hooks/use-auth";
 
 export function PromoBar() {
   const [open, setOpen] = useState(true);
-  if (!open) return null;
+  const user = useAuth((s) => s.user);
+  if (!open || user) return null;
 
   return (
     <div className="relative bg-black px-10 py-2.5 text-center text-xs text-white sm:text-sm">

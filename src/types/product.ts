@@ -34,3 +34,34 @@ export type Review = {
   date: string;
   verified?: boolean;
 };
+
+export type OrderStatus =
+  | "pending"
+  | "processing"
+  | "shipped"
+  | "delivered"
+  | "cancelled";
+
+export type OrderAddress = {
+  fullName: string;
+  phone: string;
+  line1: string;
+  city: string;
+  postal: string;
+};
+
+export type Order = {
+  id: string;
+  userId: string;
+  userName: string;
+  email: string;
+  items: CartItem[];
+  subtotal: number;
+  discount: number;
+  delivery: number;
+  total: number;
+  address: OrderAddress;
+  payment: "cod" | "card";
+  status: OrderStatus;
+  createdAt: string;
+};

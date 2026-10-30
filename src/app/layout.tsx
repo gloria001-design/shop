@@ -1,8 +1,5 @@
 import type { Metadata } from "next";
 import { Archivo_Black, Manrope } from "next/font/google";
-import { PromoBar } from "@/src/components/promo-bar";
-import { SiteHeader } from "@/src/components/site-header";
-import { SiteFooter } from "@/src/components/site-footer";
 import "./globals.css";
 
 const integral = Archivo_Black({
@@ -32,10 +29,7 @@ export default function RootLayout({
       <body
         className={`${integral.variable} ${satoshi.variable} min-h-screen bg-white font-sans text-black antialiased`}
       >
-        <PromoBar />
-        <SiteHeader />
         {children}
-        <SiteFooter />
       </body>
     </html>
   );

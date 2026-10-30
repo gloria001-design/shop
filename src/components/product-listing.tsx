@@ -10,7 +10,7 @@ import {
   SlidersHorizontal,
   X,
 } from "lucide-react";
-import { products } from "@/src/lib/products";
+import { useCatalog } from "@/src/hooks/use-catalog";
 import { ProductCard } from "@/src/components/product-card";
 import type { DressStyle, ProductType } from "@/src/types/product";
 
@@ -66,6 +66,7 @@ export function ProductListing({
   const [sort, setSort] = useState("popular");
   const [page, setPage] = useState(1);
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const products = useCatalog((s) => s.items);
 
   const filtered = useMemo(() => {
     let list = [...products];
@@ -91,7 +92,7 @@ export function ProductListing({
     if (sort === "popular") list.sort((a, b) => b.reviewsCount - a.reviewsCount);
 
     return list;
-  }, [type, style, color, size, priceMin, priceMax, sort, initialQuery, initialSale, initialNew]);
+  }, [products, type, style, color, size, priceMin, priceMax, sort, initialQuery, initialSale, initialNew]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const currentPage = Math.min(page, totalPages);

@@ -2,16 +2,28 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ChevronRight, Minus, Plus, Tag, Trash2 } from "lucide-react";
+import { useAuth } from "@/src/hooks/use-auth";
 import { useCart } from "@/src/hooks/use-cart";
 import { SectionHeading } from "@/src/components/section-heading";
 
 export default function CartPage() {
+  const router = useRouter();
+  const user = useAuth((s) => s.user);
   const { items, setQuantity, remove, total } = useCart();
   const subtotal = total();
   const discount = Math.round(subtotal * 0.2);
   const delivery = items.length ? 15 : 0;
   const grand = Math.max(0, subtotal - discount + delivery);
+
+  function goCheckout() {
+    if (!user) {
+      router.push("/login?next=/checkout");
+      return;
+    }
+    router.push("/checkout");
+  }
 
   return (
     <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -152,10 +164,16 @@ export default function CartPage() {
             </form>
             <button
               type="button"
+              onClick={goCheckout}
               className="mt-5 flex h-14 w-full items-center justify-center gap-2 rounded-full bg-black text-sm font-medium text-white"
             >
               Go to Checkout <ChevronRight className="size-4" />
             </button>
+            {!user && (
+              <p className="mt-3 text-center text-xs text-black/50">
+                You&apos;ll log in before placing the order.
+              </p>
+            )}
           </aside>
         </div>
       )}

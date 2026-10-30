@@ -1,13 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { FormEvent, useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { FormEvent, Suspense, useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { AuthButton, AuthField, AuthShell } from "@/src/components/auth-shell";
 import { useAuth } from "@/src/hooks/use-auth";
+import { safeNext } from "@/src/lib/safe-next";
 
-export default function SignupPage() {
+function SignupForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const next = safeNext(searchParams.get("next"));
   const { signup, user, hydrated } = useAuth();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -17,8 +20,8 @@ export default function SignupPage() {
   const [pending, setPending] = useState(false);
 
   useEffect(() => {
-    if (hydrated && user) router.replace("/");
-  }, [hydrated, user, router]);
+    if (hydrated && user) router.replace(next);
+  }, [hydrated, user, next, router]);
 
   function onSubmit(e: FormEvent) {
     e.preventDefault();
@@ -32,9 +35,7 @@ export default function SignupPage() {
     setPending(false);
     if (!result.ok) {
       setError(result.error);
-      return;
     }
-    router.push("/");
   }
 
   return (
@@ -89,10 +90,25 @@ export default function SignupPage() {
       </form>
       <p className="mt-6 text-center text-sm text-black/60">
         Already have an account?{" "}
-        <Link href="/login" className="font-medium text-black underline underline-offset-2">
+        <Link
+          href={`/login${next !== "/" ? `?next=${encodeURIComponent(next)}` : ""}`}
+          className="font-medium text-black underline underline-offset-2"
+        >
           Log In
         </Link>
       </p>
     </AuthShell>
+  );
+}
+
+export default function SignupPage() {
+  return (
+    <Suspense
+      fallback={
+        <main className="py-20 text-center text-black/60">Loading…</main>
+      }
+    >
+      <SignupForm />
+    </Suspense>
   );
 }

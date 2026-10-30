@@ -1,23 +1,38 @@
-import { Suspense } from "react";
+"use client";
+
 import Link from "next/link";
-import { notFound } from "next/navigation";
 import { ChevronRight } from "lucide-react";
 import { ProductPurchase } from "@/src/components/product-purchase";
 import { ProductTabs } from "@/src/components/product-tabs";
 import { ProductCard } from "@/src/components/product-card";
 import { SectionHeading } from "@/src/components/section-heading";
-import { getProduct, products } from "@/src/lib/products";
+import { useCatalog } from "@/src/hooks/use-catalog";
 
-export function generateStaticParams() {
-  return products.map((p) => ({ id: p.id }));
-}
+export function ProductDetail({ id }: { id: string }) {
+  const { items, hydrated, getById } = useCatalog();
+  const product = getById(id);
 
-async function ProductContent({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
-  const product = getProduct(id);
-  if (!product) notFound();
+  if (!hydrated && !product) {
+    return (
+      <div className="py-20 text-center text-black/60">Loading product…</div>
+    );
+  }
 
-  const related = products.filter((p) => p.id !== product.id).slice(0, 4);
+  if (!product) {
+    return (
+      <div className="py-20 text-center">
+        <p className="text-black/60">This product is no longer available.</p>
+        <Link
+          href="/products"
+          className="mt-6 inline-flex h-12 items-center rounded-full bg-black px-8 text-sm font-medium text-white"
+        >
+          Back to shop
+        </Link>
+      </div>
+    );
+  }
+
+  const related = items.filter((p) => p.id !== product.id).slice(0, 4);
 
   return (
     <>
@@ -52,23 +67,5 @@ async function ProductContent({ params }: { params: Promise<{ id: string }> }) {
         </div>
       </section>
     </>
-  );
-}
-
-export default function ProductPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  return (
-    <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <Suspense
-        fallback={
-          <div className="py-20 text-center text-black/60">Loading product…</div>
-        }
-      >
-        <ProductContent params={params} />
-      </Suspense>
-    </main>
   );
 }
